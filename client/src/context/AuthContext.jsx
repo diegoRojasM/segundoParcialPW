@@ -1,5 +1,4 @@
 
-
 import { createContext, useState, useContext, useEffect } from "react";
 import { registerRequest, loginRequest, verifyTokenRequest } from "../api/auth";
 import Cookies from 'js-cookie';
@@ -47,6 +46,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const logout = () => {
+    Cookies.remove("token")
+    setIsAuthenticated(false)
+    setUser(null)
+  }
+
+
   useEffect(() => {
     if (errors.length > 0) {
       const timer = setTimeout(() => {
@@ -55,6 +61,8 @@ export const AuthProvider = ({ children }) => {
       return () => clearTimeout(timer);
     }
   }, [errors]);
+
+  
 
   useEffect(() => {
     async function checkLogin() {
@@ -69,7 +77,7 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const res = await verifyTokenRequest(cookies.token);
-        console.log(res);
+ 
         if (!res.data) {
           setIsAuthenticated(false);
           setLoading(false);
@@ -96,6 +104,7 @@ export const AuthProvider = ({ children }) => {
         signin,
         loading,
         user,
+        logout,
         isAuthenticated,
         errors,
         setErrors,
